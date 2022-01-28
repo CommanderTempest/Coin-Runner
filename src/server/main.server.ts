@@ -1,25 +1,30 @@
-import { Players } from "@rbxts/services";
+import { Players, Workspace } from "@rbxts/services";
 import { Coin } from "./Coin.module";
 import { MyTimer } from "./Timer.module";
+import Remotes from "shared/remotes.module";
 
 const MATCH_LENGTH = 30; // in seconds
 
 Players.PlayerAdded.Connect((p: Player) => {
-  p.CharacterAdded.Connect((character) => beginMatch)
+  print("B");
+  p.CharacterAdded.Connect(beginMatch);
 });
 
 function beginMatch(character: Model)
 {
   generateCoins(character);
-  //dropBarrier();
+  //dropBarrier(); Unimportant currently
   countdown();
 }
 
 function generateCoins(character: Model)
 {
+  print("G");
   let coinF = new Instance("Folder");
   let pos = character.PrimaryPart?.Position as Vector3;
   let myCoin = new Coin(coinF, pos);
+
+  coinF.Parent = Workspace;
 
   for (let i = 0; i<Coin.COINS_TO_GENERATE; i++)
   {
@@ -35,6 +40,6 @@ function countdown()
   {
     wait(1);
     time.decrementTimer();
-    // Give current time to client
+    Remotes.Server.Create("SendTimerToClient").SendToAllPlayers(time.getTimer());
   } // end while
 } // end countdown

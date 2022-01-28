@@ -27,6 +27,9 @@ class Coin {
     coin.Anchored = true;
     coin.BrickColor = new BrickColor("New Yeller");
     coin.Position = this.setCoinOffset();
+    print("Running to coinTouched");
+    coin.Touched.Connect((otherPart) => this.coinTouched(otherPart, coin));
+    coin.TouchEnded.Connect(() => {coin.Destroy();})
     this.prevCoinPos = coin.Position;
   } // end makeCoin
 
@@ -57,6 +60,17 @@ class Coin {
 
     return this.prevCoinPos.add(new Vector3(num1, num2, num3));
   } // end setCoinOffset
-}
+
+  // coinTouched is what will occur when a coin object is touched
+
+  private coinTouched(otherPart: BasePart, coin: Part)
+  {
+    if (otherPart.Parent?.FindFirstChild("Humanoid") != undefined)
+    {
+      print(otherPart.Name);
+      print("This is valid!");
+    }
+  } // end coinTouched
+} // end Coin
 
 export {Coin};
