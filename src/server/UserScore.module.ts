@@ -1,3 +1,5 @@
+import { NamespaceBuilder } from "@rbxts/net/out/definitions/NamespaceBuilder";
+
 class UserScore 
 {
   private static scoreArray = new Array<UserScore>();
@@ -8,10 +10,7 @@ class UserScore
   {
     this.score = 0;
     this.username = username;
-    if (this.retrieveUserFromArray(this.username) == undefined)
-    {
-      UserScore.scoreArray.push(this);
-    } // end if
+    UserScore.scoreArray.push(this);
   }
 
   getUsername() {return this.username;}
@@ -19,15 +18,16 @@ class UserScore
   setScore(score: number) {this.score = score;}
   incrementScore() {this.score++;}
 
-  private retrieveUserFromArray(userName: string)
+  static retrieveUserFromArray(userName: string)
   {
-    UserScore.scoreArray.forEach((score: UserScore) => {
-      if (score.getUsername() == userName)
+    UserScore.scoreArray.forEach((score: UserScore, i: number) => {
+      if (score.getUsername() === userName)
       {
         return score;
       } // end if
     }) // end for-each
-    return undefined;
+    //Problem to fix, in main.server.ts, kept saying it couldn't process this unless I returned only userScore, even when checking against, it errored.
+    return UserScore.retrieveUserArray()[0];
   } // end retrieveUserFromArray
 
   static retrieveUserArray()

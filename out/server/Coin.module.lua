@@ -26,14 +26,11 @@ do
 		coin.Anchored = true
 		coin.BrickColor = BrickColor.new("New Yeller")
 		coin.Position = self:setCoinOffset()
-		print("Running to coinTouched")
-		coin.Touched:Connect(function(otherPart)
-			return self:coinTouched(otherPart, coin)
-		end)
 		coin.TouchEnded:Connect(function()
 			coin:Destroy()
 		end)
 		self.prevCoinPos = coin.Position
+		return coin
 	end
 	function Coin:setCoinOffset()
 		local num1
@@ -52,10 +49,6 @@ do
 		local _prevCoinPos = self.prevCoinPos
 		local _vector3 = Vector3.new(num1, num2, num3)
 		return _prevCoinPos + _vector3
-	end
-	function Coin:coinTouched(otherPart, coin)
-		print(otherPart.Name)
-		print("This is valid!")
 	end
 	Coin.COINS_TO_GENERATE = 30
 end

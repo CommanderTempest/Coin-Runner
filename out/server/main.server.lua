@@ -6,10 +6,12 @@ local Workspace = _services.Workspace
 local Coin = TS.import(script, game:GetService("ServerScriptService"), "TS", "Coin.module").Coin
 local MyTimer = TS.import(script, game:GetService("ServerScriptService"), "TS", "Timer.module").MyTimer
 local Remotes = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "remotes.module")
+local UserScore = TS.import(script, game:GetService("ServerScriptService"), "TS", "UserScore.module").UserScore
 local MATCH_LENGTH = 30
+local touchDebounce = false
 local beginMatch
 Players.PlayerAdded:Connect(function(p)
-	print("B")
+	UserScore.new(p.Name)
 	p.CharacterAdded:Connect(beginMatch)
 end)
 local generateCoins, countdown
@@ -18,8 +20,8 @@ function beginMatch(character)
 	-- dropBarrier(); Unimportant currently
 	countdown()
 end
+local coinTouched
 function generateCoins(character)
-	print("G")
 	local coinF = Instance.new("Folder")
 	local _result = character.PrimaryPart
 	if _result ~= nil then
@@ -27,6 +29,7 @@ function generateCoins(character)
 	end
 	local pos = _result
 	local myCoin = Coin.new(coinF, pos)
+	local createdCoin
 	coinF.Parent = Workspace
 	do
 		local i = 0
@@ -40,7 +43,10 @@ function generateCoins(character)
 			if not (i < Coin.COINS_TO_GENERATE) then
 				break
 			end
-			myCoin:makeCoin()
+			createdCoin = myCoin:makeCoin()
+			createdCoin.Touched:Connect(function(otherPart)
+				return coinTouched(otherPart, createdCoin)
+			end)
 		end
 	end
 end
@@ -52,3 +58,29 @@ function countdown()
 		Remotes.Server:Create("SendTimerToClient"):SendToAllPlayers(time:getTimer())
 	end
 end
+coinTouched = TS.async(function(otherPart, coin)
+	local playerName
+	local playerScore
+	if touchDebounce == false then
+		touchDebounce = true
+		local _result = otherPart.Parent
+		if _result ~= nil then
+			_result = _result:FindFirstChild("Humanoid")
+		end
+		if _result ~= nil then
+			playerName = otherPart.Parent.Name
+			playerScore = UserScore:retrieveUserFromArray(playerName)
+			local _playerScore = playerScore
+			if not (type(_playerScore) == "nil") then
+				playerScore:incrementScore()
+				print("Currentscore = " .. tostring(playerScore:getScore()))
+			end
+			print(otherPart.Name)
+			coin:Destroy()
+			wait(1)
+		else
+			print("Invalid; Name: " .. otherPart.Name)
+		end
+		touchDebounce = false
+	end
+end)

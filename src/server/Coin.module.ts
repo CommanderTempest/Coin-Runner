@@ -4,7 +4,6 @@ class Coin {
   static COINS_TO_GENERATE = 30;  // max # of coins to generate
   readonly OFFSET = 15;           // offset between coin spawns
 
-  private touchDebounce = false;  // a debounce to prevent touch spam
   private parent;                 // parent object of the coin
   private prevCoinPos;            // position of the previous coin
 
@@ -30,10 +29,9 @@ class Coin {
     coin.Anchored = true;
     coin.BrickColor = new BrickColor("New Yeller");
     coin.Position = this.setCoinOffset();
-    print("Running to coinTouched");
-    coin.Touched.Connect((otherPart) => this.coinTouched(otherPart, coin));
     coin.TouchEnded.Connect(() => {coin.Destroy();})
     this.prevCoinPos = coin.Position;
+    return coin;
   } // end makeCoin
 
   // *******************************************************
@@ -66,22 +64,7 @@ class Coin {
 
   // coinTouched is what will occur when a coin object is touched
 
-  private coinTouched(otherPart: BasePart, coin: Part)
-  {
-    // check if this func runs on client or server.
-    if (this.touchDebounce == false)
-    {
-      this.touchDebounce = true;
-      if (otherPart.Parent?.FindFirstChild("Humanoid") != undefined)
-      {
-        print(otherPart.Name);
-        print("This is valid!");
-      } // end if
-      else {print("Invalid; Name: " + otherPart.Name);}
-    } // end if - debounce
-
-    this.touchDebounce = false;
-  } // end coinTouched
+  
 } // end Coin
 
 export {Coin};
