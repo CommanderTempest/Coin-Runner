@@ -1,3 +1,4 @@
+import { UserScore } from "./UserScore.module";
 
 class Coin {
   static COINS_TO_GENERATE = 30;  // max # of coins to generate
@@ -76,16 +77,8 @@ class Coin {
         print(otherPart.Name);
         print("This is valid!");
       } // end if
-      else {print("Invalid Name: " + otherPart.Name);}
+      else {print("Invalid; Name: " + otherPart.Name);}
     } // end if - debounce
-    //countup score?
-
-    /*
-    Remote FUNCTION to a class setup. Make an array of the class, key-value pairs.
-    Remember to check if class of (x) already exists
-    */
-
-
 
     this.touchDebounce = false;
   } // end coinTouched
