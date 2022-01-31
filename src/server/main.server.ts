@@ -15,7 +15,7 @@ function beginMatch(character: Model)
   generateCoins(character);
   //dropBarrier(); Unimportant currently
   countdown();
-}
+} // end beginMatch
 
 function generateCoins(character: Model)
 {
@@ -30,7 +30,7 @@ function generateCoins(character: Model)
   {
     myCoin.makeCoin();
   } // end for loop
-}
+} // end generateCoins
 
 function countdown()
 {

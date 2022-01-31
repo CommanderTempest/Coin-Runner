@@ -1,9 +1,11 @@
 
 class Coin {
-  static COINS_TO_GENERATE = 30;
-  readonly OFFSET = 15;
-  private parent;
-  private prevCoinPos;
+  static COINS_TO_GENERATE = 30;  // max # of coins to generate
+  readonly OFFSET = 15;           // offset between coin spawns
+
+  private touchDebounce = false;  // a debounce to prevent touch spam
+  private parent;                 // parent object of the coin
+  private prevCoinPos;            // position of the previous coin
 
   constructor (parent: Folder, playerPos: Vector3)
   {
@@ -65,11 +67,27 @@ class Coin {
 
   private coinTouched(otherPart: BasePart, coin: Part)
   {
-    if (otherPart.Parent?.FindFirstChild("Humanoid") != undefined)
+    // check if this func runs on client or server.
+    if (this.touchDebounce == false)
     {
-      print(otherPart.Name);
-      print("This is valid!");
-    }
+      this.touchDebounce = true;
+      if (otherPart.Parent?.FindFirstChild("Humanoid") != undefined)
+      {
+        print(otherPart.Name);
+        print("This is valid!");
+      } // end if
+      else {print("Invalid Name: " + otherPart.Name);}
+    } // end if - debounce
+    //countup score?
+
+    /*
+    Remote FUNCTION to a class setup. Make an array of the class, key-value pairs.
+    Remember to check if class of (x) already exists
+    */
+
+
+
+    this.touchDebounce = false;
   } // end coinTouched
 } // end Coin
 

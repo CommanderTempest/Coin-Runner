@@ -10,6 +10,6 @@ class MyTimer
   getTimer() : number {return this.timer;}
   setTimer(num: number) {this.timer = num;}
   decrementTimer() {this.timer--;}
-}
+} // end MyTimer
 
 export {MyTimer}
