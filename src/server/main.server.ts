@@ -1,14 +1,28 @@
+/*
+Programmer: krukovv (Discord: Commander-Tempest)
+
+This game was made to get me acclimated into TypeScript
+Thus, it generally does not look well thought-out and this game is
+made for only one person so I cut corners that I wouldn't cut if more then
+1 were supposed to play
+
+Known Issues:
+ - When touching a coin, the player receives 1 point.
+   However, if the player were to touch two coins at once, 
+   they only receive 1 point instead of 2.
+*/
+
 import { Players, Workspace } from "@rbxts/services";
 import { Coin } from "./Coin.module";
 import { MyTimer } from "./Timer.module";
 import Remotes from "shared/remotes.module";
-import { UserScore } from "./UserScore.module";
+import { incrementScore } from "./Score.module";
 
 const MATCH_LENGTH = 30; // in seconds
 let touchDebounce = false;  // a debounce to prevent touch spam
 
 Players.PlayerAdded.Connect((p: Player) => {
-  new UserScore(p.Name);
+  p.SetAttribute("score", 0);
   p.CharacterAdded.Connect(beginMatch);
 });
 
@@ -32,45 +46,40 @@ function generateCoins(character: Model)
   {
     createdCoin = myCoin.makeCoin();
     createdCoin.Touched.Connect((otherPart) => coinTouched(otherPart, createdCoin))
+    createdCoin.TouchEnded.Connect((otherPart) => {touchDebounce = false;})
   } // end for loop
 } // end generateCoins
 
 function countdown()
 {
   let time = new MyTimer(MATCH_LENGTH);
-
-  while (time.getTimer() > 0)
-  {
-    wait(1);
-    time.decrementTimer();
-    Remotes.Server.Create("SendTimerToClient").SendToAllPlayers(time.getTimer());
-  } // end while
+  time.countdown();
 } // end countdown
 
-async function coinTouched(otherPart: BasePart, coin: Part)
+function coinTouched(otherPart: BasePart, coin: Part)
   {
-    let playerName;
-    let playerScore: undefined | UserScore;
+    let playerChar, player, score: number;
 
     if (touchDebounce === false)
     {
       touchDebounce = true;
       if (otherPart.Parent?.FindFirstChild("Humanoid") !== undefined)
       {
-        playerName = otherPart.Parent.Name;
-        playerScore = UserScore.retrieveUserFromArray(playerName);
-
-        if (!typeIs(playerScore, "nil"))
-        {
-          playerScore.incrementScore();
-          print("Currentscore = " + playerScore.getScore());
-        }
-        print(otherPart.Name);
+        playerChar = otherPart.Parent;
+        player = Players.GetPlayerFromCharacter(playerChar);
+        score = player?.GetAttribute("score") as number; 
+        score++;
+        player?.SetAttribute("score", score);
+        Remotes.Server.Create("SendScoreToClient").SendToAllPlayers(score);
+        print("Valid! - Currentscore=" + score);
+        print("Part - " + otherPart);
         coin.Destroy();
-        wait(1); // placeholder wait, because I can't figure out how to get it to wait until after the coins destroyed to remove debounce
+      } 
+      else 
+      {
+        print("Invalid; Name: " + otherPart.Name); 
+        touchDebounce = false;
       } // end if
-      else {print("Invalid; Name: " + otherPart.Name);}
-      touchDebounce = false;
     } // end if - debounce
   } // end coinTouched
 

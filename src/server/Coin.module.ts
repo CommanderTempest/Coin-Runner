@@ -1,5 +1,3 @@
-import { UserScore } from "./UserScore.module";
-
 class Coin {
   static COINS_TO_GENERATE = 30;  // max # of coins to generate
   readonly OFFSET = 15;           // offset between coin spawns

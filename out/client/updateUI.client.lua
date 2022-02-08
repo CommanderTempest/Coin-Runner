@@ -5,7 +5,9 @@ local Players = TS.import(script, TS.getModule(script, "@rbxts", "services")).Pl
 local Roact = TS.import(script, TS.getModule(script, "@rbxts", "roact").src)
 local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui")
 local element = (Roact.createElement("ScreenGui"))
+local ele2 = (Roact.createElement("ScreenGui"))
 local myHandle = Roact.mount(element, playerGui, "timerUI")
+local myHandle2 = Roact.mount(ele2, playerGui, "scoreUI")
 Remotes.Client:OnEvent("SendTimerToClient", function(timer)
 	local newElement = (Roact.createElement("ScreenGui", {}, {
 		Roact.createElement("TextLabel", {
@@ -15,4 +17,14 @@ Remotes.Client:OnEvent("SendTimerToClient", function(timer)
 		}),
 	}))
 	myHandle = Roact.update(myHandle, newElement)
+end)
+Remotes.Client:OnEvent("SendScoreToClient", function(score)
+	local newElement = (Roact.createElement("ScreenGui", {}, {
+		Roact.createElement("TextLabel", {
+			Text = tostring(score),
+			Size = UDim2.new(0, 150, 0, 150),
+			Position = UDim2.new(0, 600, 0, 0),
+		}),
+	}))
+	myHandle2 = Roact.update(myHandle2, newElement)
 end)
