@@ -13,7 +13,7 @@ class MyTimer
   setTimer(num: number) {this.timer = num;}
   decrementTimer() {this.timer--;}
 
-  countdown()
+  countdown(): number
   {
     while (this.timer > 0)
     {
@@ -21,6 +21,7 @@ class MyTimer
       this.decrementTimer();
       Remotes.Server.Create("SendTimerToClient").SendToAllPlayers(this.timer);
     } // end while
+    return 1; // ended
   } // end countdown
 } // end MyTimer
 

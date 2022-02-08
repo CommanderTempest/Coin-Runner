@@ -31,6 +31,7 @@ do
 			self:decrementTimer()
 			Remotes.Server:Create("SendTimerToClient"):SendToAllPlayers(self.timer)
 		end
+		return 1
 	end
 end
 return {

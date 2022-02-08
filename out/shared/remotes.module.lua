@@ -6,5 +6,6 @@ local Definitions = _net.Definitions
 local Remotes = Net.Definitions.Create({
 	SendTimerToClient = Definitions.ServerToClientEvent(),
 	SendScoreToClient = Definitions.ServerToClientEvent(),
+	SendHighscoreToClient = Definitions.ServerToClientEvent(),
 })
 return Remotes
